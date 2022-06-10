@@ -1,0 +1,210 @@
+openapi: 3.0.0
+info:
+  title: NEO STOCKS API
+  description: MongoDB ExpressJS NodeJS REST API
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000/api/
+    description: Localhost development server 
+  # - url: https://smsj-men-restapi.herokuapp.com/api/ -- deployment server 
+  #   description: Heroku remote server -- deployment description 
+components:
+  securitySchemes:
+    ApiKeyAuth:        # arbitrary name for the security scheme
+      type: apiKey
+      in: header       # can be "header", "query" or "cookie"
+      name: auth-token
+
+  schemas:
+    Stock:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+        price:
+          type: number
+        ipoDate:
+          type: string
+        exchange:
+          type: string
+        inTheTop20:
+          type: boolean
+    
+    
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        date:
+          type: string
+
+paths:
+
+  /user/register:
+    post:
+      summary: Register a new User
+      description: Register a new User in the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+
+      responses:
+        201:
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  _id:
+                    type: string
+
+  /user/login:
+    post:
+      summary: Login a User
+      description: Login a User in order to get JWT token (auth-token)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      
+      responses:
+        200:
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  data:
+                    type: string
+
+
+  /stocks:
+    get:
+      summary: Retrieves a list of Stocks
+      description: Retrieves a list of Stocks as JSON objects.
+      responses:
+        200:
+          description: A list of stock JSON objects in an array.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Stock"
+    
+    post:
+      summary: Create a new Stock
+      description: Create a new Stock
+      security:
+        - ApiKeyAuth: []      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Stock"
+
+      responses:
+        201:
+          description: Stock created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stock"
+  
+  /stocks/{id}:
+    get:
+      summary: Specific Stock
+      description: Retrieves a specific Stock based on it id.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string
+      responses:
+        200:
+          description: A Stock in the format of a JSON object.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Stock"
+   
+    put:
+      summary: Updates a specific Stock
+      description: Updates a specific Stock based on it id
+      security:
+        - ApiKeyAuth: []            
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Stock"
+
+      responses:
+        201:
+          description: Stock updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stock"
+
+    delete:
+      summary: Deletes a specific Stock
+      description: Deletes a specific Product based on it id
+      security:
+        - ApiKeyAuth: []            
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string      
+
+      responses:
+        201:
+          description: Stock deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stock"
+
+  
+
