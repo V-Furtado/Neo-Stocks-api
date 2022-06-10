@@ -12,7 +12,7 @@ Demo REST API
 Download the code and get started by running the following commands:
 ```
 git clone [repo]
-cd NeoStocks-api
+cd Neo-Stocks-api
 
 ```
 
